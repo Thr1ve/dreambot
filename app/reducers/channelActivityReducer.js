@@ -1,31 +1,27 @@
 
-import { REQUEST_VOLUMES, RECEIVE_VOLUMES } from '../actions';
+import { REQUEST_VOLUMES_BY_HOUR, RECEIVE_VOLUMES_BY_HOUR } from '../actions';
 
 export default function channelActivity(state = {
-  volumes: {},
+  volumesByDay: {},
   currentCollection: []
 }, action) {
   switch (action.type) {
-    case REQUEST_VOLUMES: {
-      const date = `${action.year}-${action.month}-${action.day}`;
+    case REQUEST_VOLUMES_BY_HOUR:
       return {
         ...state,
-        volumes: {
-          ...state.volumes,
-          [date]: volumeReducer(state.volumes[date], action)
+        volumesByDay: {
+          ...state.volumesByDay,
+          [action.date]: volumeReducer(state.volumesByDay[action.date], action)
         }
       };
-    }
-    case RECEIVE_VOLUMES: {
-      const date = `${action.year}-${action.month}-${action.day}`;
+    case RECEIVE_VOLUMES_BY_HOUR:
       return {
         ...state,
-        volumes: {
-          ...state.volumes,
-          [date]: volumeReducer(state.volumes[date], action)
+        volumesByDay: {
+          ...state.volumesByDay,
+          [action.date]: volumeReducer(state.volumesByDay[action.date], action)
         }
       };
-    }
     default:
       return state;
   }
@@ -33,21 +29,21 @@ export default function channelActivity(state = {
 
 function volumeReducer(state = {
   loading: false,
-  hours: []
+  byHour: []
 }, action) {
   switch (action.type) {
-    case REQUEST_VOLUMES: {
+    case REQUEST_VOLUMES_BY_HOUR: {
       return {
         ...state,
         loading: true,
       };
     }
-    case RECEIVE_VOLUMES: {
+    case RECEIVE_VOLUMES_BY_HOUR: {
       return {
         ...state,
         loading: false,
-        total: action.volumes.reduce((prev, cur) => prev + cur.reduction, 0),
-        byHour: action.volumes
+        total: action.hours.reduce((prev, cur) => prev + cur),
+        byHour: action.hours
       };
     }
     default:

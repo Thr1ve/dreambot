@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { fetchVolumes } from '../actions';
+import { fetchVolumesIfNeeded } from '../actions';
 import ChannelActivity from '../components/ChannelActivity';
 
 const ChannelActivityContainer = React.createClass({
@@ -11,22 +11,22 @@ const ChannelActivityContainer = React.createClass({
       month: 3,
       day: 17
     };
-    this.props.dispatch(fetchVolumes(date));
+    this.props.dispatch(fetchVolumesIfNeeded(date));
   },
 
   render() {
-    const { volumes } = this.props.channelActivity;
-    const keys = Object.keys(volumes);
+    const { volumesByDay } = this.props;
+    const keys = Object.keys(volumesByDay);
     // we should probably just pass the `currentCollection` from state
     return (
-      <ChannelActivity volumes={volumes} keys={keys} />
+      <ChannelActivity volumes={volumesByDay} keys={keys} />
     );
   }
 });
 
 function mapStateToProps(state) {
   return {
-    channelActivity: state.channelActivity
+    volumesByDay: state.channelActivity.volumesByDay
   };
 }
 
