@@ -1,16 +1,5 @@
 import { connection, r } from '../utils/rethink';
 import moment from 'moment';
-import axios from 'axios';
-
-export function queryCohortProfiles(cb) {
-  axios.get('/api/cohort')
-  .then(res => {
-    cb(res);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-}
 
 export function getMessages() {
   return connection()
