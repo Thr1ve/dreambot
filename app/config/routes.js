@@ -1,9 +1,9 @@
 import React from 'react';
 import { Route, IndexRoute, IndexRedirect } from 'react-router';
 
-import Main from '../components/Main';
+import Main from '../containers/Main';
 import App from '../containers/App';
-import Home from '../components/Home';
+import Home from '../containers/Home';
 import LoginContainer from '../containers/LoginContainer';
 import CatchContainer from '../containers/CatchContainer';
 
