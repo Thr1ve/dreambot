@@ -4,7 +4,7 @@ import { isDev, slackToken } from './envDefaults';
 import Botkit from 'botkit';
 
 const controller = Botkit.slackbot({
-  debug: isDev
+  // debug: isDev
 });
 
 controller.spawn({
