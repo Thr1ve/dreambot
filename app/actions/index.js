@@ -86,7 +86,7 @@ export const receiveEngagementByUser = (count) => (
 export const routeLocationDidUpdate = (location) => (
   {
     type: 'LOCATION_UPDATED',
-    location,  
+    location,
   }
 );
 
