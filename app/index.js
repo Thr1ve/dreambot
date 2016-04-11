@@ -14,7 +14,6 @@ import { browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import configureStore from './config/configureStore';
-import { routeLocationDidUpdate } from './actions/index';
 
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
@@ -29,9 +28,6 @@ let render = () => {
   );
 };
 
-
-browserHistory.listen(location => store.dispatch(routeLocationDidUpdate(location)));
-
 if (module.hot) {
   // Support hot reloading of components
   // and display an overlay for runtime errors
@@ -43,6 +39,7 @@ if (module.hot) {
      rootEl
     );
   };
+
   render = () => {
     try {
       renderApp();
@@ -50,6 +47,7 @@ if (module.hot) {
       renderError(error);
     }
   };
+
   module.hot.accept('./containers/Root', () => {
     // https://github.com/reactjs/redux/pull/1455/files#r55138543
     setTimeout(render);
