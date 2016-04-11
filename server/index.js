@@ -1,21 +1,18 @@
 import path from 'path';
-import applyAuth from './auth/auth';
-import express from 'express';
 import http from 'http';
+import express from 'express';
 import { listen } from 'rethinkdb-websocket-server';
 
 import webpack from 'webpack';
 import webpackMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
-import request from 'request';
 import config from '../webpack.config.js';
+
+import applyAuth from './auth/auth';
 import { queryWhitelist, sessionCreator } from './auth/queries';
 import { isDev, port, rethinkHost, rethinkPort } from './utils/envDefaults';
 
-console.log('isDev is: -----', isDev);
-
 import './bot/bot.js';
-
 
 const app = express();
 const server = http.createServer(app);
@@ -34,21 +31,6 @@ listen({
 
 // Add routes to app here:
 // ex: app.use('/api', apiRoutes);
-
-app.get('/api/cohort', function(req, res) {
-  var cohort = { members: [], profiles: [] };
-  request(`https://slack.com/api/channels.info?token=${process.env.token}&channel=${process.env.CHANNEL}`, function (error, response, body) {
-    if (!error && response.statusCode === 200) {
-      cohort.members = JSON.parse(body).channel.members;
-      request(`https://slack.com/api/users.list?token=${process.env.token}`, function(err, response, body) {
-        if(err) console.log(err);
-          cohort.profiles = JSON.parse(body).members;
-          res.send(JSON.stringify(cohort));
-      });
-    }
-  });
-});
-
 
 // referenced https://github.com/christianalfoni/webpack-express-boilerplate
 if (isDev) {
