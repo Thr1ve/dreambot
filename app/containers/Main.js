@@ -1,5 +1,5 @@
 import React from 'react';
-import GlobalNotifications from '../containers/GlobalNotifications';
+import GlobalNotifications from './GlobalNotifications';
 
 const Main = React.createClass({
   render() {
