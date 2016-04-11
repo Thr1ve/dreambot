@@ -6,12 +6,14 @@
   Research: Why does he import the babel-polyfill?
 */
 import 'babel-polyfill';
+import 'bulma/css/bulma.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { browserHistory } from 'react-router';
-import configureStore from './config/configureStore';
 import { syncHistoryWithStore } from 'react-router-redux';
-import 'bulma/css/bulma.css';
+
+import configureStore from './config/configureStore';
 import { routeLocationDidUpdate } from './actions/index';
 
 const store = configureStore();
