@@ -2,13 +2,13 @@ import React from 'react';
 import Login from '../components/Login';
 
 const LoginContainer = React.createClass({
-  render(){
+  render() {
     return (
       <div>
-      <Login />
+        <Login />
       </div>
-    )
+    );
   }
-})
+});
 
 export default LoginContainer;
