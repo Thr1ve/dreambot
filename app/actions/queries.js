@@ -1,16 +1,5 @@
 import { connection, r } from '../utils/rethink';
 import moment from 'moment';
-import axios from 'axios';
-
-export function queryCohortProfiles(cb) {
-  axios.get('/api/cohort')
-  .then(res => {
-    cb(res);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-}
 
 export function getMessages() {
   return connection()
@@ -34,17 +23,17 @@ export function getSearchResults(word) {
 }
 
 export function getAvgMessagesByHour({ year, month, day }) {
-   return connection()
-     .then(conn =>
-       r.table('messages')
-         .filter(
-            r.row('ts').date().eq(r.time(year, month, day, 'Z'))
-          )
-          .group(r.row('ts').hours())
-          .avg('score')
-          .run(conn)
-          .then(cursor => cursor.toArray())
-      );
+  return connection()
+    .then(conn =>
+      r.table('messages')
+        .filter(
+          r.row('ts').date().eq(r.time(year, month, day, 'Z'))
+        )
+        .group(r.row('ts').hours())
+        .avg('score')
+        .run(conn)
+        .then(cursor => cursor.toArray())
+    );
 }
 // TODO: add number of messages for each hour?
 export function getVolumeOfMessagesByHour({ year, month, day }) {
@@ -108,7 +97,7 @@ export function queryUserMessagesById() {
   );
 }
 
-export function getClassifications(){
+export function getClassifications() {
   return connection()
   .then(conn =>
     r.table('messages')
@@ -120,7 +109,7 @@ export function getClassifications(){
   );
 }
 
-export function getUserMessageReduction(){
+export function getUserMessageReduction() {
   return connection()
   .then(conn =>
     r.table('messages')
@@ -132,11 +121,11 @@ export function getUserMessageReduction(){
   );
 }
 
-export function getSingleUserMessageReduction(userId){
+export function getSingleUserMessageReduction(userId) {
   return connection()
   .then(conn =>
     r.table('messages')
-    .filter({user: userId})
+    .filter({ user: userId })
     .filter(
       r.row('ts').month().eq(moment().month() + 1)
     )
