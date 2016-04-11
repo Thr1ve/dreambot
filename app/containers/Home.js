@@ -17,6 +17,8 @@ import {
   getSingleUserMessageReduction, // userId:string
  } from '../actions/queries';
 
+import ChannelActivityContainer from './ChannelActivityContainer';
+
 const Home = React.createClass({
   componentWillMount() {
     // getSingleUserMessageReduction('U0S1U1H54')
@@ -29,15 +31,16 @@ const Home = React.createClass({
     // getAvgMessagesByHour({ year: 2016, month: 3, day: 17 })
     // getVolumeOfMessagesByHour({ year: 2016, month: 3, day: 17 })
     // getSearchResults('love')
-    getMessages()
-      .then(res => console.log(res))
-      .catch(err => console.log(err));
+    // getMessages()
+      // .then(res => console.log(res))
+      // .catch(err => console.log(err));
   },
 
   render() {
     return (
       <div>
         Home
+        <ChannelActivityContainer />
       </div>
     );
   }
