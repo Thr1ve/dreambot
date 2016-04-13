@@ -6,6 +6,15 @@ const areUndefined = (...args) => args.every(e => isUndefined(e));
 const isDefined = e => !isUndefined(e);
 const areDefined = (...args) => args.every(e => isDefined(e));
 
+export function objectify(arr) {
+  return arr.reduce((prev, cur) => {
+    if (!prev[cur.group]) {
+      prev[cur.group] = cur.reduction;
+    }
+    return prev;
+  }, {});
+}
+
 // A valid date object will have one of the following:
 //   a. A day, month, and year
 //   b. A month and year
@@ -40,14 +49,15 @@ export function getDateAsKey({ year, month, day }) {
   return `${year}-${month}-${day}`;
 }
 
-export function fillHours(arr) {
-  let objectified = arr.reduce((prev, cur) => {
-    if (!prev[cur.group]) {
-      prev[cur.group] = cur.reduction;
-    }
-    return prev;
-  }, {});
+export function fillTime(arr, delimiter, month) {
+  if (delimiter === 'DAYS' && isUndefined(month)) {
+    console.error('Must give month as third parameter when filling DAYS');
+    return;
+  }
 
+  let objectified = objectify(arr);
+
+  // TODO: handle filling different delimiters
   return Array.from({ length: 24 }, (val, i) =>
     objectified[i] ? objectified[i] : 0);
 }
