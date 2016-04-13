@@ -13,13 +13,21 @@ const filters = {
   day: byDay
 };
 
-const assembleVolumesQuery = (date, delimiter) =>
+const groups = {
+  HOURS: 'hours',
+  DAYS: 'day',
+  MONTHS: 'month'
+};
+
+const assembleVolumesQuery = (date, delimiter) => {
+  console.log(delimiter);
   // We grab each key from our date object, then add the
   // appropriate filter from `filters` and add it to the query
-  Object.keys(date).reduce((prev, cur) => prev.filter(filters[cur](date[cur])), r.table('messages'))
+  return Object.keys(date).reduce((prev, cur) => prev.filter(filters[cur](date[cur])), r.table('messages'))
   // group them by our delimiter
-  .group(r.row('ts')[delimiter]())
+  .group(r.row('ts')[groups[delimiter]]())
   .count();
+}
 
 export function getMessageVolumes(date) {
   let delimiter;

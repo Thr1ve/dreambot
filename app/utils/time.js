@@ -46,18 +46,34 @@ export function getDelimiter({ year, month, day }) {
 }
 
 export function getDateAsKey({ year, month, day }) {
-  return `${year}-${month}-${day}`;
+  if (isDefined(day)) {
+    return `${year}-${month}-${day}`;
+  } else if (isDefined(month)) {
+    return `${year}-${month}`;
+  } else if (isDefined(year)) {
+    return `${year}`;
+  }
 }
 
-export function fillTime(arr, delimiter, month) {
-  if (delimiter === 'DAYS' && isUndefined(month)) {
-    console.error('Must give month as third parameter when filling DAYS');
+export function fillTime(arr, delimiter, date) {
+  if (delimiter === 'DAYS' && isUndefined(date.month)) {
+    console.error('Must give as third parameter when filling DAYS');
     return;
   }
 
   let objectified = objectify(arr);
 
-  // TODO: handle filling different delimiters
-  return Array.from({ length: 24 }, (val, i) =>
+  return Array.from({ length: getLength(delimiter, date) }, (val, i) =>
     objectified[i] ? objectified[i] : 0);
 }
+
+function getLength(delimiter, date) {
+  if (delimiter === 'HOURS') {
+    return 24;
+  } else if (delimiter === 'DAYS') {
+    return moment(getDateAsKey(date)).daysInMonth();
+  } else if (delimiter === 'MONTHS') {
+    return 12;
+  }
+}
+

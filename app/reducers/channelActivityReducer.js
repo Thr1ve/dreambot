@@ -1,54 +1,73 @@
+/* eslint-disable complexity */
 
-import { REQUEST_VOLUMES_BY_HOUR, RECEIVE_VOLUMES_BY_HOUR } from '../actions';
+import { REQUEST_VOLUMES, RECEIVE_VOLUMES } from '../actions';
 
 export default function channelActivity(state = {
-  delimiter: 'hour',
-  volumesByDay: {},
+  delimiter: 'HOURS',
+  volumes: volumesReducer(),
   currentCollection: []
-}, action) {
+}, action = {}) {
   switch (action.type) {
-    case REQUEST_VOLUMES_BY_HOUR:
+    case REQUEST_VOLUMES:
       return {
         ...state,
-        volumesByDay: {
-          ...state.volumesByDay,
-          [action.date]: volumeReducer(state.volumesByDay[action.date], action)
-        }
+        volumes: volumesReducer(state.volumes, action)
       };
-    case RECEIVE_VOLUMES_BY_HOUR:
+    case RECEIVE_VOLUMES:
       return {
         ...state,
-        volumesByDay: {
-          ...state.volumesByDay,
-          [action.date]: volumeReducer(state.volumesByDay[action.date], action)
-        }
+        volumes: volumesReducer(state.volumes, action)
       };
     default:
       return state;
   }
 }
 
-function volumeReducer(state = {
-  loading: false,
-  byHour: []
-}, action) {
-  switch (action.type) {
-    case REQUEST_VOLUMES_BY_HOUR: {
+function volumesReducer(state = {
+  byHour: volumeReducer(),
+  byDay: volumeReducer(),
+  byMonth: volumeReducer()
+}, action = {}) {
+  switch (action.delimiter) {
+    case 'HOURS':
       return {
         ...state,
-        loading: true,
+        byHour: volumeReducer(state.byHour, action)
       };
-    }
-    case RECEIVE_VOLUMES_BY_HOUR: {
+    case 'DAYS':
       return {
         ...state,
-        loading: false,
-        total: action.hours.reduce((prev, cur) => prev + cur),
-        byHour: action.hours
+        byDay: volumeReducer(state.byDay, action)
       };
-    }
+    case 'MONTHS':
+      return {
+        ...state,
+        byMonth: volumeReducer(state.byMonth, action)
+      };
     default:
       return state;
   }
 }
 
+// poorly named......
+function volumeReducer(state = {}, action = {}) {
+  switch (action.type) {
+    case REQUEST_VOLUMES:
+      return {
+        ...state,
+        [action.dateKey]: {
+          loading: true,
+        }
+      };
+    case RECEIVE_VOLUMES:
+      return {
+        ...state,
+        [action.dateKey]: {
+          loading: false,
+          data: action.data
+        }
+      };
+    default:
+      return state;
+  }
+}

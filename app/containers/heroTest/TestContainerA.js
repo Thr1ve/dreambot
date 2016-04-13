@@ -1,9 +1,14 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import EasyTransition from 'react-easy-transition';
 
-// see http://bulma.io/documentation/layout/hero/
+import { fetchVolumesIfNeeded } from '../../actions';
+
 export const TestContainer = React.createClass({
+  componentDidMount() {
+    this.props.dispatch(fetchVolumesIfNeeded({ year: 2016 }));
+  },
+
   render() {
     return (
       <EasyTransition

@@ -5,6 +5,7 @@ const HeroContainer = ({ color, gradient, children, height }) => {
   const c = color ? `is-${color}` : '';
   const h = height ? `is-${height}` : '';
 
+  // see http://bulma.io/documentation/layout/hero/
   return (
     <section className={`hero ${c} ${g} ${h}`}>
       { children
