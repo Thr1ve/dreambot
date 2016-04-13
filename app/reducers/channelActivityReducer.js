@@ -2,6 +2,7 @@
 import { REQUEST_VOLUMES_BY_HOUR, RECEIVE_VOLUMES_BY_HOUR } from '../actions';
 
 export default function channelActivity(state = {
+  delimiter: 'hour',
   volumesByDay: {},
   currentCollection: []
 }, action) {
