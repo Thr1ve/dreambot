@@ -1,17 +1,39 @@
-import { connection, r } from '../utils/rethink';
 import moment from 'moment';
 
-export function getVolumeOfMessagesByHour({ year, month, day }) {
-  return connection()
-    .then(conn =>
-      r.table('messages')
-        .filter(
-          r.row('ts').date().eq(r.time(year, month, day, 'Z'))
-        )
-        .group(r.row('ts').hours())
-        .count()
-        .run(conn)
-        .then(cursor => cursor.toArray())
+import { connection, r } from '../utils/rethink';
+import { isValidDate, getDelimiter } from '../utils/time';
+
+const byYear = (year) => r.row('ts').year().eq(year);
+const byMonth = (month) => r.row('ts').month().eq(month);
+const byDay = (day) => r.row('ts').day().eq(day);
+
+const filters = {
+  year: byYear,
+  month: byMonth,
+  day: byDay
+};
+
+const assembleVolumesQuery = (date, delimiter) =>
+  // We grab each key from our date object, then add the
+  // appropriate filter from `filters` and add it to the query
+  Object.keys(date).reduce((prev, cur) => prev.filter(filters[cur](date[cur])), r.table('messages'))
+  // group them by our delimiter
+  .group(r.row('ts')[delimiter]())
+  .count();
+
+export function getMessageVolumes(date) {
+  let delimiter;
+
+  if (!isValidDate(date)) {
+    return Promise.reject('Incorrect date object passed to query');
+  }
+
+  delimiter = getDelimiter(date);
+
+  return connection().then(conn =>
+      assembleVolumesQuery(date, delimiter)
+      .run(conn)
+      .then(cursor => cursor.toArray())
     );
 }
 
