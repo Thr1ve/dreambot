@@ -28,11 +28,11 @@ export function isValidDate({ year, month, day }) {
 // assumes valid date object
 export function getDelimiter({ year, month, day }) {
   if (isDefined(day)) {
-    return 'hours';
+    return 'HOURS';
   } else if (isDefined(month)) {
-    return 'day';
+    return 'DAYS';
   } else if (isDefined(year)) {
-    return 'month';
+    return 'MONTHS';
   }
 }
 
