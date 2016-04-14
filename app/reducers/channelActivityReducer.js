@@ -1,10 +1,14 @@
 /* eslint-disable complexity */
 
-import { REQUEST_VOLUMES, RECEIVE_VOLUMES } from '../actions';
+import {
+  REQUEST_VOLUMES, RECEIVE_VOLUMES, SET_DELIMITER,
+  SET_DATE_RANGE, SET_DATES
+} from '../actions';
 
 export default function channelActivity(state = {
   delimiter: 'HOURS',
   volumes: volumesReducer(),
+  currentDateRange: {},
   currentCollection: []
 }, action = {}) {
   switch (action.type) {
@@ -17,6 +21,21 @@ export default function channelActivity(state = {
       return {
         ...state,
         volumes: volumesReducer(state.volumes, action)
+      };
+    case SET_DELIMITER:
+      return {
+        ...state,
+        delimiter: action.delimiter
+      };
+    case SET_DATE_RANGE:
+      return {
+        ...state,
+        currentDateRange: action.dateRange
+      };
+    case SET_DATES:
+      return {
+        ...state,
+        currentCollection: action.dates
       };
     default:
       return state;

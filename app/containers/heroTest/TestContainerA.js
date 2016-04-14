@@ -2,11 +2,22 @@ import React from 'react';
 import { connect } from 'react-redux';
 import EasyTransition from 'react-easy-transition';
 
-import { fetchVolumesIfNeeded } from '../../actions';
+import TestDisplayContainer from './TestDisplayContainer';
+import { fetchVolumesIfNeeded, updateDelimiter, safeSetDateRange } from '../../actions';
+import Dropdown from '../../components/bulma/Dropdown';
 
 export const TestContainer = React.createClass({
   componentDidMount() {
-    this.props.dispatch(fetchVolumesIfNeeded({ year: 2016 }));
+    const { dispatch } = this.props;
+    // dispatch(fetchVolumesIfNeeded({ year: 2016, month: 3, day: 17 }));
+    dispatch(safeSetDateRange({
+      start: { year: 2016, month: 3 },
+      end: { year: 2016, month: 4 }
+    }));
+  },
+
+  handleDropDownChange(e) {
+    this.props.dispatch(updateDelimiter(e.target.value));
   },
 
   render() {
@@ -20,6 +31,20 @@ export const TestContainer = React.createClass({
       >
         <div className="hero-content">
           <div className="container">
+            <div className="columns">
+              <div className="column is-4">
+                <Dropdown label="Delimiter" onChange={this.handleDropDownChange}>
+                  <option value="HOURS"> hour </option>
+                  <option value="DAYS"> day </option>
+                  <option value="MONTHS"> month </option>
+                </Dropdown>
+                { /* <p className="notification is-danger"> First column </p> */ }
+              </div>
+              <div className="column is-8">
+                { /* <p className="notification is-primary"> Second column </p> */ }
+                <TestDisplayContainer />
+              </div>
+            </div>
             <h1 className="title">
               This is the A page!
             </h1>

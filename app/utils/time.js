@@ -6,6 +6,7 @@ const areUndefined = (...args) => args.every(e => isUndefined(e));
 const isDefined = e => !isUndefined(e);
 const areDefined = (...args) => args.every(e => isDefined(e));
 
+
 export function objectify(arr) {
   return arr.reduce((prev, cur) => {
     if (!prev[cur.group]) {
@@ -35,6 +36,7 @@ export function isValidDate({ year, month, day }) {
 
 // Uses the date object to get the appropriate delimiter to group by
 // assumes valid date object
+// TODO: There has GOT to be a more concise way to handle date-keys and delimiters
 export function getDelimiter({ year, month, day }) {
   if (isDefined(day)) {
     return 'HOURS';
@@ -45,6 +47,7 @@ export function getDelimiter({ year, month, day }) {
   }
 }
 
+// TODO: There has GOT to be a more concise way to handle date-keys and delimiters
 export function getDateAsKey({ year, month, day }) {
   if (isDefined(day)) {
     return `${year}-${month}-${day}`;
@@ -53,6 +56,68 @@ export function getDateAsKey({ year, month, day }) {
   } else if (isDefined(year)) {
     return `${year}`;
   }
+}
+
+// TODO: There has GOT to be a more concise way to handle date-keys and delimiters
+export function getDateFromKey(dateKey) {
+  const split = dateKey.split('-');
+  let newObj = {};
+
+  if (split.length === 3) {
+    newObj.day = parseInt(split[2], 10);
+  }
+
+  if (split.length >= 2) {
+    newObj.month = parseInt(split[1], 10);
+  }
+
+  newObj.year = parseInt(split[0], 10);
+  return newObj;
+}
+
+// TODO: There has GOT to be a more concise way to handle date-keys and delimiters
+function getDelimiterParent(delimiter) {
+  switch (delimiter) {
+    case 'HOURS':
+      return 'DAYS';
+    case 'DAYS':
+      return 'MONTHS';
+    case 'MONTHS':
+      return 'YEARS';
+    default:
+      return console.error('INVALID DELIMITER: ', delimiter);
+  }
+}
+
+// TODO: There has GOT to be a more concise way to handle date-keys and delimiters
+const getDateFormat = delimiter => {
+  switch (delimiter) {
+    case 'HOURS':
+      return 'YYYY-M-D';
+    case 'DAYS':
+      return 'YYYY-M';
+    case 'MONTHS':
+      return 'YYYY';
+    default:
+      return console.error('INVALID DELIMITER: ', delimiter);
+  }
+};
+
+export function buildDatesArray({ start, end }, delimiter) {
+  let results = [];
+  const delimiterParent = getDelimiterParent(delimiter).toLowerCase();
+  const dateFormat = getDateFormat(delimiter);
+
+  const startDate = moment(getDateAsKey(start, dateFormat));
+  const endDate = moment(getDateAsKey(end, dateFormat));
+  const delimitedDistance = endDate.diff(startDate, delimiterParent) + 1;
+
+  for (let i = 0; i < delimitedDistance; i++) {
+    results.push(startDate.format(dateFormat));
+    startDate.add(1, delimiterParent);
+  }
+
+  return results;
 }
 
 export function fillTime(arr, delimiter, date) {
