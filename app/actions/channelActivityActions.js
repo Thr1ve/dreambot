@@ -25,17 +25,11 @@ export const SET_DELIMITER = 'SET_DELIMITER';
 export const setDelimiter = delimiter =>
   ({ type: SET_DELIMITER, delimiter });
 
-const volumeKey = {
-  HOURS: 'byHour',
-  DAYS: 'byDay',
-  MONTHS: 'byMonth'
-};
-
 function shouldFetchVolumes(state, date, delimiter) {
   const { volumes } = state.channelActivity;
   const dateKey = getDateAsKey(date, delimiter);
 
-  return !volumes[volumeKey[delimiter]][dateKey];
+  return !volumes[delimiter][dateKey];
 }
 
 const fetchVolumes = (date, delimiter) => dispatch => {

@@ -27,12 +27,6 @@ const TestDisplayContainer = React.createClass({
   }
 });
 
-const volumeKey = {
-  HOURS: 'byHour',
-  DAYS: 'byDay',
-  MONTHS: 'byMonth'
-};
-
 function mapStateToProps(state) {
   const { delimiter, currentCollection, currentDateRange, volumes } = state.channelActivity;
 
@@ -42,8 +36,7 @@ function mapStateToProps(state) {
     dateRange: currentDateRange,
     volumes: Array.from({ length: currentCollection.length }, (v, i) => {
       const dateKey = currentCollection[i];
-      const delimiterKey = volumeKey[delimiter];
-      return volumes[delimiterKey][dateKey];
+      return volumes[delimiter][dateKey];
     })
   };
 }

@@ -43,25 +43,25 @@ export default function channelActivity(state = {
 }
 
 function volumesReducer(state = {
-  byHour: volumeReducer(),
-  byDay: volumeReducer(),
-  byMonth: volumeReducer()
+  HOURS: volumeReducer(),
+  DAYS: volumeReducer(),
+  MONTHS: volumeReducer()
 }, action = {}) {
   switch (action.delimiter) {
     case 'HOURS':
       return {
         ...state,
-        byHour: volumeReducer(state.byHour, action)
+        HOURS: volumeReducer(state.HOURS, action)
       };
     case 'DAYS':
       return {
         ...state,
-        byDay: volumeReducer(state.byDay, action)
+        DAYS: volumeReducer(state.DAYS, action)
       };
     case 'MONTHS':
       return {
         ...state,
-        byMonth: volumeReducer(state.byMonth, action)
+        MONTHS: volumeReducer(state.MONTHS, action)
       };
     default:
       return state;
