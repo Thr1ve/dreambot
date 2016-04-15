@@ -55,26 +55,6 @@ export function getDateAsKey({ year, month, day, hour }) {
 }
 
 // TODO: There has GOT to be a more concise way to handle date-keys and delimiters
-export function getDateFromKey(dateKey) {
-  const split = dateKey.split('-');
-  let newObj = {};
-
-  if (split.length === 4) {
-    newObj.hour = parseInt(split[3], 10);
-  }
-  if (split.length >= 3) {
-    newObj.day = parseInt(split[2], 10);
-  }
-
-  if (split.length >= 2) {
-    newObj.month = parseInt(split[1], 10);
-  }
-
-  newObj.year = parseInt(split[0], 10);
-  return newObj;
-}
-
-// TODO: There has GOT to be a more concise way to handle date-keys and delimiters
 const getDateFormat = delimiter => {
   switch (delimiter) {
     case 'HOURS':
