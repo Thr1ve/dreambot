@@ -74,17 +74,12 @@ function volumeReducer(state = {}, action = {}) {
     case REQUEST_VOLUMES:
       return {
         ...state,
-        [action.dateKey]: {
-          loading: true,
-        }
+        ...action
       };
     case RECEIVE_VOLUMES:
       return {
         ...state,
-        [action.dateKey]: {
-          loading: false,
-          data: action.data
-        }
+        ...action.data
       };
     default:
       return state;

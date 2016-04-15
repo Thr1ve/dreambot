@@ -2,17 +2,18 @@
 import { getMessageVolumes } from './queries';
 import {
   fillTime, getDateAsKey, getDateFromKey,
-  getDelimiter, isValidDate, buildDatesArray
+  getDelimiter, isValidDate, buildDatesArray,
+  transmuteTime
 } from '../utils/time';
 
 // VOLUMES:
 export const REQUEST_VOLUMES = 'REQUEST_VOLUMES';
-export const requestVolumes = (dateKey, delimiter) =>
-  ({ type: REQUEST_VOLUMES, dateKey, delimiter });
+export const requestVolumes = (data, delimiter) =>
+  ({ type: REQUEST_VOLUMES, data, delimiter });
 
 export const RECEIVE_VOLUMES = 'RECEIVE_VOLUMES';
-export const receiveVolumes = (data, dateKey, delimiter) =>
-  ({ type: RECEIVE_VOLUMES, data, dateKey, delimiter });
+export const receiveVolumes = (data, delimiter) =>
+  ({ type: RECEIVE_VOLUMES, data, delimiter });
 
 // If we want to handle invalidating our data, we would
 // expand this function. However, as the data for a past
@@ -23,16 +24,17 @@ const shouldFetchVolumes = (state, dateKey, delimiter) =>
 const fetchVolumes = (date, delimiter) => dispatch => {
   const dateKey = getDateAsKey(date);
 
-  dispatch(requestVolumes(dateKey, delimiter));
+  const filledTest = fillTime([], delimiter, date);
+  const transmutedTest = transmuteTime(dateKey, filledTest, true);
+
+  dispatch(requestVolumes(transmutedTest, delimiter));
 
   return getMessageVolumes(date)
-    .then(data => dispatch(
-      receiveVolumes(
-        fillTime(data, delimiter, date),
-        dateKey,
-        delimiter
-      ))
-    )
+    .then(data => {
+      const filled = fillTime(data, delimiter, date);
+      const transmuted = transmuteTime(dateKey, filled, false);
+      return dispatch(receiveVolumes(transmuted, delimiter));
+    })
     .catch(err => console.log(err));
 };
 

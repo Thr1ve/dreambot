@@ -6,7 +6,7 @@ const TestDisplayContainer = React.createClass({
     const { volumes, delimiter, currentCollection, dateRange } = this.props;
     return (
       <div>
-        <code>
+        <pre>
           {`// Delimiter: ${delimiter}  `}
           <br />
           {
@@ -21,7 +21,7 @@ const TestDisplayContainer = React.createClass({
               </span>
             ))
           }
-        </code>
+        </pre>
       </div>
     );
   }
@@ -30,6 +30,7 @@ const TestDisplayContainer = React.createClass({
 function mapStateToProps(state) {
   const { delimiter, currentCollection, currentDateRange, volumes } = state.channelActivity;
 
+  console.log(currentCollection);
   return {
     delimiter: delimiter,
     currentCollection: currentCollection,

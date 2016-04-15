@@ -20,7 +20,6 @@ const groups = {
 };
 
 const assembleVolumesQuery = (date, delimiter) => {
-  console.log(delimiter);
   // We grab each key from our date object, then add the
   // appropriate filter from `filters` and add it to the query
   return Object.keys(date).reduce((prev, cur) => prev.filter(filters[cur](date[cur])), r.table('messages'))

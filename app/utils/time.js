@@ -7,7 +7,7 @@ const isDefined = e => !isUndefined(e);
 const areDefined = (...args) => args.every(e => isDefined(e));
 
 
-export function objectify(arr) {
+export function objectifyRethinkReduction(arr) {
   return arr.reduce((prev, cur) => {
     if (!prev[cur.group]) {
       prev[cur.group] = cur.reduction;
@@ -126,7 +126,7 @@ export function fillTime(arr, delimiter, date) {
     return;
   }
 
-  let objectified = objectify(arr);
+  let objectified = objectifyRethinkReduction(arr);
 
   return Array.from({ length: getLength(delimiter, date) }, (val, i) =>
     objectified[i] ? objectified[i] : 0);
@@ -141,4 +141,27 @@ function getLength(delimiter, date) {
     return 12;
   }
 }
+
+// Turn this:
+// {
+//   2016-3-17: [
+//     [3, 2, 0, 0, ...]
+//   ]
+// }
+// into this:
+// {
+//   2016-3-17-1: { loading: false, val: 3 },
+//   2016-3-17-2: { loading: false, val: 2 },
+//   2016-3-17-3: { loading: false, val: 0 },
+//   2016-3-17-4: { loading: false, val: 0 },
+//   ...
+// }
+export function transmuteTime(dateKey, timeArray, loading) {
+  let result = {};
+  timeArray.forEach((val, i) => {
+    result[`${dateKey}-${i + 1}`] = loading ? { loading } : { val, loading };
+  });
+  return result;
+}
+
 
