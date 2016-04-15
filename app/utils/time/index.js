@@ -3,10 +3,7 @@ import moment from 'moment';
 
 export * from './date';
 
-import {
-  isUndefined,
-  isDefined,
-} from '../checks';
+import { isDefined } from '../checks';
 
 // Uses the date object to get the appropriate delimiter to group by
 // assumes valid date object

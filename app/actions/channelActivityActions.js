@@ -1,11 +1,6 @@
 
 import { getMessageVolumes } from './queries';
-import {
-  fillTime, getDateAsKey, getDateFromKey,
-  getDelimiter, getParentDate, isValidDate,
-  transmuteTime, buildDatesArray, GlanceDate
-} from '../utils/time';
-
+import { buildDatesArray, GlanceDate } from '../utils/time';
 import { objectifyRethinkReduction } from '../utils/rethink';
 
 // VOLUMES:
@@ -24,19 +19,18 @@ const shouldFetchVolumes = (volumes, dateKey, delimiter) =>
   !volumes[delimiter][dateKey];
 
 const fetchVolumes = (glance, delimiter) => dispatch => {
-  const parentDateKey = glance.getKey({ parent: true });
-
-  const filledTest = fillTime([], delimiter, glance.date);
-  const emptyData = transmuteTime(parentDateKey, filledTest, true);
-
-  dispatch(requestVolumes(emptyData, delimiter));
+  dispatch(requestVolumes(
+    glance.transmute([], delimiter, true),
+    delimiter
+  ));
 
   return getMessageVolumes(glance.getParentDate())
-    .then(data => {
-      const filled = fillTime(objectifyRethinkReduction(data), delimiter, glance.date);
-      const transmuted = transmuteTime(parentDateKey, filled, false);
-      return dispatch(receiveVolumes(transmuted, delimiter));
-    })
+    .then(data => dispatch(
+      receiveVolumes(
+        glance.transmute(objectifyRethinkReduction(data), delimiter, false),
+        delimiter
+      ))
+    )
     .catch(err => console.log(err));
 };
 

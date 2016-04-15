@@ -50,6 +50,15 @@ export class GlanceDate {
       return 'MONTHS';
     }
   }
+
+  transmute(data, delimiter, loading) {
+    return transmuteTime(
+      this.getKey({ parent: true }),
+      fillTime(data, delimiter, this.date),
+      loading
+    );
+  }
+
 }
 
 GlanceDate.getDateFormat = function (delimiter) {
