@@ -17,7 +17,7 @@ export class GlanceDate {
   }
 
   getKey() {
-    const { year, month, day, hour } = this.dateObj;
+    const { year, month, day, hour } = this.date;
     if (isDefined(hour)) {
       return `${year}-${month}-${day}-${hour}`;
     } else if (isDefined(day)) {
@@ -30,7 +30,7 @@ export class GlanceDate {
   }
 
   getParentDate() {
-    const { year, month, day, hour } = this.dateObj;
+    const { year, month, day, hour } = this.date;
     if (isDefined(hour)) {
       return { year, month, day };
     } else if (isDefined(day)) {
@@ -41,7 +41,7 @@ export class GlanceDate {
   }
 
   getDefaultDelimiter() {
-    const { year, month, day, hour } = this.dateObj;
+    const { year, month, day, hour } = this.date;
     if (isDefined(hour)) {
       return 'HOURS';
     } else if (isDefined(day)) {

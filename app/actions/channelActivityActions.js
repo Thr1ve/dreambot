@@ -77,8 +77,8 @@ export const setDateRange = (dateRange) =>
 // error handling elsewhere?
 export const safeSetDateRange = ({ start, end }) => dispatch => {
   if (start.getDefaultDelimiter() === end.getDefaultDelimiter()) {
-    dispatch(setDateRange({ start: start.dateObj, end: end.dateObj }));
-    dispatch(updateDates({ start: start.dateObj, end: end.dateObj }));
+    dispatch(setDateRange({ start: start.date, end: end.date }));
+    dispatch(updateDates({ start: start.date, end: end.date }));
   }
 };
 
