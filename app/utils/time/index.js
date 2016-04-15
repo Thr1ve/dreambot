@@ -84,6 +84,9 @@ export function buildDatesArray({ start, end }, delimiter) {
 }
 
 export function fillTime(arr, delimiter, date) {
+  // the number of days in a month is variable, so
+  // we need to assure we have the month# if our delimiter
+  // is DAYS
   if (delimiter === 'DAYS' && isUndefined(date.month)) {
     console.error('Must give as third parameter when filling DAYS');
     return;
@@ -91,6 +94,7 @@ export function fillTime(arr, delimiter, date) {
 
   let objectified = objectifyRethinkReduction(arr);
 
+  // Make an array that has 0's for each hour/day/month we don't have.
   return Array.from({ length: getLength(delimiter, date) }, (val, i) =>
     objectified[i] ? objectified[i] : 0);
 }
@@ -127,5 +131,3 @@ export function transmuteTime(dateKey, timeArray, loading) {
   });
   return result;
 }
-
-

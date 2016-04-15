@@ -16,8 +16,8 @@ export class GlanceDate {
     this.date = date;
   }
 
-  getKey() {
-    const { year, month, day, hour } = this.date;
+  getKey({ parent } = { parent: false }) {
+    const { year, month, day, hour } = parent ? this.getParentDate(this.date) : this.date;
     if (isDefined(hour)) {
       return `${year}-${month}-${day}-${hour}`;
     } else if (isDefined(day)) {
@@ -68,6 +68,7 @@ GlanceDate.getDateFormat = function (delimiter) {
 // let d = new GlanceDate({ year: 2016, month: 3, day: 4, hour: 17 });
 // console.log(d);
 // console.log(d.getKey());
+// console.log(d.getKey({ parent: true }));
 // console.log(d.getParentDate());
 // console.log(d.getDefaultDelimiter());
 
