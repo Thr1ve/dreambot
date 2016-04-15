@@ -74,7 +74,7 @@ function volumeReducer(state = {}, action = {}) {
     case REQUEST_VOLUMES:
       return {
         ...state,
-        ...action
+        ...action.data
       };
     case RECEIVE_VOLUMES:
       return {

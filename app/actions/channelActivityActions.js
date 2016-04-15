@@ -2,8 +2,8 @@
 import { getMessageVolumes } from './queries';
 import {
   fillTime, getDateAsKey, getDateFromKey,
-  getDelimiter, isValidDate, buildDatesArray,
-  transmuteTime
+  getDelimiter, getParentDate, isValidDate,
+  transmuteTime, buildDatesArray, GlanceDate
 } from '../utils/time';
 
 // VOLUMES:
@@ -18,32 +18,33 @@ export const receiveVolumes = (data, delimiter) =>
 // If we want to handle invalidating our data, we would
 // expand this function. However, as the data for a past
 // date should never change, we're opting not to do that.
-const shouldFetchVolumes = (state, dateKey, delimiter) =>
-  !state.channelActivity.volumes[delimiter][dateKey];
+const shouldFetchVolumes = (volumes, dateKey, delimiter) =>
+  !volumes[delimiter][dateKey];
 
 const fetchVolumes = (date, delimiter) => dispatch => {
-  const dateKey = getDateAsKey(date);
+  const parentDateKey = getDateAsKey(getParentDate(date));
 
   const filledTest = fillTime([], delimiter, date);
-  const transmutedTest = transmuteTime(dateKey, filledTest, true);
+  const transmutedTest = transmuteTime(parentDateKey, filledTest, true);
 
   dispatch(requestVolumes(transmutedTest, delimiter));
 
-  return getMessageVolumes(date)
+  return getMessageVolumes(getParentDate(date))
     .then(data => {
       const filled = fillTime(data, delimiter, date);
-      const transmuted = transmuteTime(dateKey, filled, false);
+      const transmuted = transmuteTime(parentDateKey, filled, false);
       return dispatch(receiveVolumes(transmuted, delimiter));
     })
     .catch(err => console.log(err));
 };
 
-export const fetchVolumesIfNeeded = date => (dispatch, getState) => {
+export const fetchVolumesIfNeeded = (date) => (dispatch, getState) => {
+  const { volumes } = getState().channelActivity;
   if (!isValidDate(date)) {
     return console.error('Invalid Date', date);
   }
   const delimiter = getDelimiter(date);
-  if (shouldFetchVolumes(getState(), getDateAsKey(date, delimiter), delimiter)) {
+  if (shouldFetchVolumes(volumes, getDateAsKey(date), delimiter)) {
     return dispatch(fetchVolumes(date, delimiter));
   }
 };
@@ -54,7 +55,7 @@ export const SET_DATES = 'SET_DATES';
 export const setDates = dates =>
   ({ type: SET_DATES, dates });
 
-export const fetchOrSetDates = (datesArray) => dispatch => {
+export const fetchOrSetDates = (datesArray) => (dispatch) => {
   datesArray.forEach((dateKey) => {
     dispatch(fetchVolumesIfNeeded(getDateFromKey(dateKey)));
   });
@@ -74,11 +75,10 @@ export const setDateRange = (dateRange) =>
 
 // Should we just have the dateRange hold its own delimiter and do the
 // error handling elsewhere?
-export const safeSetDateRange = dateRange => dispatch => {
-  const { start, end } = dateRange;
-  if (getDelimiter(start) === getDelimiter(end)) {
-    dispatch(setDateRange(dateRange));
-    dispatch(updateDates(dateRange));
+export const safeSetDateRange = ({ start, end }) => dispatch => {
+  if (start.getDefaultDelimiter() === end.getDefaultDelimiter()) {
+    dispatch(setDateRange({ start: start.dateObj, end: end.dateObj }));
+    dispatch(updateDates({ start: start.dateObj, end: end.dateObj }));
   }
 };
 

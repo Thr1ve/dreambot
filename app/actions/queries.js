@@ -14,9 +14,9 @@ const filters = {
 };
 
 const groups = {
-  HOURS: 'hours',
-  DAYS: 'day',
-  MONTHS: 'month'
+  DAYS: 'hours',
+  MONTHS: 'day',
+  YEARS: 'month'
 };
 
 const assembleVolumesQuery = (date, delimiter) => {
@@ -36,6 +36,7 @@ export function getMessageVolumes(date) {
   }
 
   delimiter = getDelimiter(date);
+  // console.log('DELIMITER IN QUERY: ', delimiter);
 
   return connection().then(conn =>
       assembleVolumesQuery(date, delimiter)

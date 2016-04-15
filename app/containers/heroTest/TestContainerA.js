@@ -5,14 +5,15 @@ import EasyTransition from 'react-easy-transition';
 import TestDisplayContainer from './TestDisplayContainer';
 import { fetchVolumesIfNeeded, updateDelimiter, safeSetDateRange } from '../../actions';
 import Dropdown from '../../components/bulma/Dropdown';
+import { GlanceDate } from '../../utils/time';
 
 export const TestContainer = React.createClass({
   componentDidMount() {
     const { dispatch } = this.props;
     // dispatch(fetchVolumesIfNeeded({ year: 2016, month: 3, day: 17 }));
     dispatch(safeSetDateRange({
-      start: { year: 2016, month: 3 },
-      end: { year: 2016, month: 4 }
+      start: new GlanceDate({ year: 2016, month: 3, day: 17, hour: 1 }),
+      end: new GlanceDate({ year: 2016, month: 3, day: 17, hour: 8 })
     }));
   },
 

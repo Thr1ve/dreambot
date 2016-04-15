@@ -1,6 +1,8 @@
 
 import moment from 'moment';
 
+export * from './date';
+
 const isUndefined = e => e === undefined;
 const areUndefined = (...args) => args.every(e => isUndefined(e));
 const isDefined = e => !isUndefined(e);
@@ -16,40 +18,34 @@ export function objectifyRethinkReduction(arr) {
   }, {});
 }
 
-// A valid date object will have one of the following:
-//   a. A day, month, and year
-//   b. A month and year
-//   c. A year
-export function isValidDate({ year, month, day }) {
-  // does it have a year, month, and day?
-  if (areDefined(year, month, day)) {
-    return true;
-  // does it have a month and year, but no day?
-  } else if (areDefined(year, month) && isUndefined(day)) {
-    return true;
-  // does it have only a year?
-  } else if (isDefined(year) && areUndefined(month, day)) {
-    return true;
-  }
-  return false;
-}
-
 // Uses the date object to get the appropriate delimiter to group by
 // assumes valid date object
 // TODO: There has GOT to be a more concise way to handle date-keys and delimiters
-export function getDelimiter({ year, month, day }) {
-  if (isDefined(day)) {
+export function getDelimiter({ year, month, day, hour }) {
+  if (isDefined(hour)) {
     return 'HOURS';
-  } else if (isDefined(month)) {
+  } else if (isDefined(day)) {
     return 'DAYS';
-  } else if (isDefined(year)) {
+  } else if (isDefined(month)) {
     return 'MONTHS';
   }
 }
 
+export function getParentDate({ year, month, day, hour }) {
+  if (isDefined(hour)) {
+    return { year, month, day };
+  } else if (isDefined(day)) {
+    return { year, month };
+  } else if (isDefined(month)) {
+    return { year };
+  }
+}
+
 // TODO: There has GOT to be a more concise way to handle date-keys and delimiters
-export function getDateAsKey({ year, month, day }) {
-  if (isDefined(day)) {
+export function getDateAsKey({ year, month, day, hour }) {
+  if (isDefined(hour)) {
+    return `${year}-${month}-${day}-${hour}`;
+  } else if (isDefined(day)) {
     return `${year}-${month}-${day}`;
   } else if (isDefined(month)) {
     return `${year}-${month}`;
@@ -63,7 +59,10 @@ export function getDateFromKey(dateKey) {
   const split = dateKey.split('-');
   let newObj = {};
 
-  if (split.length === 3) {
+  if (split.length === 4) {
+    newObj.hour = parseInt(split[3], 10);
+  }
+  if (split.length >= 3) {
     newObj.day = parseInt(split[2], 10);
   }
 
@@ -76,28 +75,14 @@ export function getDateFromKey(dateKey) {
 }
 
 // TODO: There has GOT to be a more concise way to handle date-keys and delimiters
-function getDelimiterParent(delimiter) {
-  switch (delimiter) {
-    case 'HOURS':
-      return 'DAYS';
-    case 'DAYS':
-      return 'MONTHS';
-    case 'MONTHS':
-      return 'YEARS';
-    default:
-      return console.error('INVALID DELIMITER: ', delimiter);
-  }
-}
-
-// TODO: There has GOT to be a more concise way to handle date-keys and delimiters
 const getDateFormat = delimiter => {
   switch (delimiter) {
     case 'HOURS':
-      return 'YYYY-M-D';
+      return 'YYYY-M-D-H';
     case 'DAYS':
-      return 'YYYY-M';
+      return 'YYYY-M-D';
     case 'MONTHS':
-      return 'YYYY';
+      return 'YYYY-M';
     default:
       return console.error('INVALID DELIMITER: ', delimiter);
   }
@@ -105,16 +90,15 @@ const getDateFormat = delimiter => {
 
 export function buildDatesArray({ start, end }, delimiter) {
   let results = [];
-  const delimiterParent = getDelimiterParent(delimiter).toLowerCase();
   const dateFormat = getDateFormat(delimiter);
 
-  const startDate = moment(getDateAsKey(start, dateFormat));
-  const endDate = moment(getDateAsKey(end, dateFormat));
-  const delimitedDistance = endDate.diff(startDate, delimiterParent) + 1;
+  const startDate = moment(getDateAsKey(start), dateFormat);
+  const endDate = moment(getDateAsKey(end), dateFormat);
+  const delimitedDistance = endDate.diff(startDate, delimiter) + 1;
 
   for (let i = 0; i < delimitedDistance; i++) {
     results.push(startDate.format(dateFormat));
-    startDate.add(1, delimiterParent);
+    startDate.add(1, delimiter);
   }
 
   return results;
@@ -158,6 +142,7 @@ function getLength(delimiter, date) {
 // }
 export function transmuteTime(dateKey, timeArray, loading) {
   let result = {};
+  // console.log('DATEKEY: ', dateKey);
   timeArray.forEach((val, i) => {
     result[`${dateKey}-${i + 1}`] = loading ? { loading } : { val, loading };
   });

@@ -3,19 +3,19 @@ import { connect } from 'react-redux';
 
 const TestDisplayContainer = React.createClass({
   render() {
-    const { volumes, delimiter, currentCollection, dateRange } = this.props;
+    const { displayedVolumes, delimiter, currentCollection } = this.props;
     return (
       <div>
         <pre>
           {`// Delimiter: ${delimiter}  `}
           <br />
           {
-            volumes.map((arr, i) => (
+            displayedVolumes.map((v, i) => (
               <span key={i}>
                 {
-                  arr.loading ?
+                  v.loading ?
                     <span> Loading... </span> :
-                    `${currentCollection[i]}: ${JSON.stringify(arr.data)}`
+                    `${currentCollection[i]}: ${JSON.stringify(v.val)}`
                 }
                 <br />
               </span>
@@ -28,14 +28,11 @@ const TestDisplayContainer = React.createClass({
 });
 
 function mapStateToProps(state) {
-  const { delimiter, currentCollection, currentDateRange, volumes } = state.channelActivity;
-
-  console.log(currentCollection);
+  const { delimiter, currentCollection, volumes } = state.channelActivity;
   return {
     delimiter: delimiter,
     currentCollection: currentCollection,
-    dateRange: currentDateRange,
-    volumes: Array.from({ length: currentCollection.length }, (v, i) => {
+    displayedVolumes: Array.from({ length: currentCollection.length }, (v, i) => {
       const dateKey = currentCollection[i];
       return volumes[delimiter][dateKey];
     })
