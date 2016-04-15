@@ -1,9 +1,11 @@
 /* eslint-disable complexity */
 
-const isUndefined = e => e === undefined;
-const areUndefined = (...args) => args.every(e => isUndefined(e));
-const isDefined = e => !isUndefined(e);
-const areDefined = (...args) => args.every(e => isDefined(e));
+import {
+  isUndefined,
+  areUndefined,
+  isDefined,
+  areDefined,
+} from '../checks';
 
 export class GlanceDate {
   constructor(dateObj) {

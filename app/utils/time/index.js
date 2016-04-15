@@ -3,11 +3,10 @@ import moment from 'moment';
 
 export * from './date';
 
-const isUndefined = e => e === undefined;
-const areUndefined = (...args) => args.every(e => isUndefined(e));
-const isDefined = e => !isUndefined(e);
-const areDefined = (...args) => args.every(e => isDefined(e));
-
+import {
+  isUndefined,
+  isDefined,
+} from '../checks';
 
 export function objectifyRethinkReduction(arr) {
   return arr.reduce((prev, cur) => {
