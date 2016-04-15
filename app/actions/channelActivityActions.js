@@ -6,6 +6,8 @@ import {
   transmuteTime, buildDatesArray, GlanceDate
 } from '../utils/time';
 
+import { objectifyRethinkReduction } from '../utils/rethink';
+
 // VOLUMES:
 export const REQUEST_VOLUMES = 'REQUEST_VOLUMES';
 export const requestVolumes = (data, delimiter) =>
@@ -21,31 +23,29 @@ export const receiveVolumes = (data, delimiter) =>
 const shouldFetchVolumes = (volumes, dateKey, delimiter) =>
   !volumes[delimiter][dateKey];
 
-const fetchVolumes = (date, delimiter) => dispatch => {
-  const parentDateKey = getDateAsKey(getParentDate(date));
+const fetchVolumes = (glance, delimiter) => dispatch => {
+  const parentDateKey = glance.getKey({ parent: true });
 
-  const filledTest = fillTime([], delimiter, date);
-  const transmutedTest = transmuteTime(parentDateKey, filledTest, true);
+  const filledTest = fillTime([], delimiter, glance.date);
+  const emptyData = transmuteTime(parentDateKey, filledTest, true);
 
-  dispatch(requestVolumes(transmutedTest, delimiter));
+  dispatch(requestVolumes(emptyData, delimiter));
 
-  return getMessageVolumes(getParentDate(date))
+  return getMessageVolumes(glance.getParentDate())
     .then(data => {
-      const filled = fillTime(data, delimiter, date);
+      const filled = fillTime(objectifyRethinkReduction(data), delimiter, glance.date);
       const transmuted = transmuteTime(parentDateKey, filled, false);
       return dispatch(receiveVolumes(transmuted, delimiter));
     })
     .catch(err => console.log(err));
 };
 
-export const fetchVolumesIfNeeded = (date) => (dispatch, getState) => {
+export const fetchVolumesIfNeeded = (glance) => (dispatch, getState) => {
   const { volumes } = getState().channelActivity;
-  if (!isValidDate(date)) {
-    return console.error('Invalid Date', date);
-  }
-  const delimiter = getDelimiter(date);
-  if (shouldFetchVolumes(volumes, getDateAsKey(date), delimiter)) {
-    return dispatch(fetchVolumes(date, delimiter));
+  const delimiter = glance.getDefaultDelimiter();
+
+  if (shouldFetchVolumes(volumes, glance.getKey(), delimiter)) {
+    return dispatch(fetchVolumes(glance, delimiter));
   }
 };
 
@@ -57,7 +57,7 @@ export const setDates = dates =>
 
 export const fetchOrSetDates = (datesArray) => (dispatch) => {
   datesArray.forEach((dateKey) => {
-    dispatch(fetchVolumesIfNeeded(getDateFromKey(dateKey)));
+    dispatch(fetchVolumesIfNeeded(new GlanceDate(dateKey)));
   });
   return dispatch(setDates(datesArray));
 };

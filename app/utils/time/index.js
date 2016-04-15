@@ -8,15 +8,6 @@ import {
   isDefined,
 } from '../checks';
 
-export function objectifyRethinkReduction(arr) {
-  return arr.reduce((prev, cur) => {
-    if (!prev[cur.group]) {
-      prev[cur.group] = cur.reduction;
-    }
-    return prev;
-  }, {});
-}
-
 // Uses the date object to get the appropriate delimiter to group by
 // assumes valid date object
 // TODO: There has GOT to be a more concise way to handle date-keys and delimiters
@@ -81,53 +72,4 @@ export function buildDatesArray({ start, end }, delimiter) {
   }
 
   return results;
-}
-
-export function fillTime(arr, delimiter, date) {
-  // the number of days in a month is variable, so
-  // we need to assure we have the month# if our delimiter
-  // is DAYS
-  if (delimiter === 'DAYS' && isUndefined(date.month)) {
-    console.error('Must give as third parameter when filling DAYS');
-    return;
-  }
-
-  let objectified = objectifyRethinkReduction(arr);
-
-  // Make an array that has 0's for each hour/day/month we don't have.
-  return Array.from({ length: getLength(delimiter, date) }, (val, i) =>
-    objectified[i] ? objectified[i] : 0);
-}
-
-function getLength(delimiter, date) {
-  if (delimiter === 'HOURS') {
-    return 24;
-  } else if (delimiter === 'DAYS') {
-    return moment(getDateAsKey(date)).daysInMonth();
-  } else if (delimiter === 'MONTHS') {
-    return 12;
-  }
-}
-
-// Turn this:
-// {
-//   2016-3-17: [
-//     [3, 2, 0, 0, ...]
-//   ]
-// }
-// into this:
-// {
-//   2016-3-17-1: { loading: false, val: 3 },
-//   2016-3-17-2: { loading: false, val: 2 },
-//   2016-3-17-3: { loading: false, val: 0 },
-//   2016-3-17-4: { loading: false, val: 0 },
-//   ...
-// }
-export function transmuteTime(dateKey, timeArray, loading) {
-  let result = {};
-  // console.log('DATEKEY: ', dateKey);
-  timeArray.forEach((val, i) => {
-    result[`${dateKey}-${i + 1}`] = loading ? { loading } : { val, loading };
-  });
-  return result;
 }

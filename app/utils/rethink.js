@@ -19,4 +19,15 @@ export const connection = function () {
   };
   return RethinkdbWebsocketClient.connect(options);
 };
+
 export const r = RethinkdbWebsocketClient.rethinkdb;
+
+export function objectifyRethinkReduction(arr) {
+  return arr.reduce((prev, cur) => {
+    if (!prev[cur.group]) {
+      prev[cur.group] = cur.reduction;
+    }
+    return prev;
+  }, {});
+}
+
