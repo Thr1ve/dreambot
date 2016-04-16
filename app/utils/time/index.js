@@ -7,7 +7,6 @@ import { isDefined } from '../checks';
 
 // Uses the date object to get the appropriate delimiter to group by
 // assumes valid date object
-// TODO: There has GOT to be a more concise way to handle date-keys and delimiters
 export function getDelimiter({ year, month, day, hour }) {
   if (isDefined(hour)) {
     return 'HOURS';
@@ -54,12 +53,16 @@ export function buildDatesArray({ start, end }, delimiter) {
   const startDate = moment(start.wrap().getKey(), dateFormat);
   const endDate = moment(end.wrap({ end: true }).getKey(), dateFormat);
 
-  const delimitedDistance = endDate.diff(startDate, delimiter) + 1;
+  // TODO: abstract this logic to function or find a way to isolate it elsewhere
+  const dflt = delimiter === 'HOURS' ? 0 : 1;
+  const delimitedDistance = endDate.diff(startDate, delimiter) + dflt;
 
   for (let i = 0; i < delimitedDistance; i++) {
     results.push(startDate.format(dateFormat));
     startDate.add(1, delimiter);
   }
+
+  console.log('results: ', results);
 
   return results;
 }

@@ -45,7 +45,12 @@ export class GlanceDate {
 
   getChildDate({ end } = { end: false }) {
     const { year, month, day, hour } = this.date;
-    const n = end ? GlanceDate.getLength(this, getNextDelimiter(this.getDefaultDelimiter())) : 1;
+    const nextDelimiter = getNextDelimiter(this.getDefaultDelimiter());
+    // TODO: abstract this logic to function or find a way to isolate it elsewhere
+    const dflt = nextDelimiter === 'HOURS' ? 0 : 1;
+
+    const n = end ? GlanceDate.getLength(this, nextDelimiter) : dflt;
+
     if (isDefined(hour)) {
       return { year, month, day, hour: n };
     } else if (isDefined(day)) {
@@ -74,9 +79,11 @@ export class GlanceDate {
     const dateKey = this.getKey({ parent: true });
     let result = {};
 
+    // TODO: abstract this logic to function or find a way to isolate it elsewhere
+    const dflt = delimiter === 'HOURS' ? 0 : 1;
     // Make an array that has 0's for each hour/day/month we don't have.
     const filled = Array.from({ length: GlanceDate.getLength(this, delimiter) }, (val, i) =>
-      data[i + 1] ? data[i + 1] : 0);
+      data[i + dflt] ? data[i + dflt] : 0);
 
     // then, Turn this:
     // {
@@ -93,7 +100,7 @@ export class GlanceDate {
     //   ...
     // }
     filled.forEach((val, i) => {
-      result[`${dateKey}-${i + 1}`] = loading ? { loading } : { val, loading };
+      result[`${dateKey}-${i + dflt}`] = loading ? { loading } : { val, loading };
     });
 
     return result;
