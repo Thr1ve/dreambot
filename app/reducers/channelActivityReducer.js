@@ -6,7 +6,7 @@ import {
 } from '../actions';
 
 export default function channelActivity(state = {
-  delimiter: 'DAYS',
+  delimiter: '',
   volumes: volumesReducer(),
   currentDateRange: {},
   currentCollection: []

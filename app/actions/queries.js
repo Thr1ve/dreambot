@@ -22,24 +22,21 @@ const groups = {
 const assembleVolumesQuery = (date, delimiter) => {
   // We grab each key from our date object, then add the
   // appropriate filter from `filters` and add it to the query
-  return Object.keys(date).reduce((prev, cur) => prev.filter(filters[cur](date[cur])), r.table('messages'))
+  return Object.keys(date).reduce((prev, cur) =>
+    prev.filter(filters[cur](date[cur])), r.table('messages'))
   // group them by our delimiter
   .group(r.row('ts')[groups[delimiter]]())
   .count();
-}
+};
 
-export function getMessageVolumes(date) {
-  let delimiter;
-
-  if (!isValidDate(date)) {
-    return Promise.reject('Incorrect date object passed to query');
-  }
-
-  delimiter = getDelimiter(date);
-  // console.log('DELIMITER IN QUERY: ', delimiter);
+export function getMessageVolumes(glance) {
+  // const delimiter = glance.getDefaultDelimiter({ parent: true });
 
   return connection().then(conn =>
-      assembleVolumesQuery(date, delimiter)
+      assembleVolumesQuery(
+        glance.getParentDate(),
+        glance.getDefaultDelimiter({ parent: true })
+      )
       .run(conn)
       .then(cursor => cursor.toArray())
     );

@@ -9,13 +9,15 @@ const TestDisplayContainer = React.createClass({
         <pre>
           {`// Delimiter: ${delimiter}  `}
           <br />
+          {`// # of Displayed Chunks: ${displayedVolumes.length}  `}
+          <br />
           {
             displayedVolumes.map((v, i) => (
               <span key={i}>
                 {
-                  v.loading ?
+                  v && v.loading ?
                     <span> Loading... </span> :
-                    `${currentCollection[i]}: ${JSON.stringify(v.val)}`
+                    `${currentCollection[i]}: ${v === undefined ? '' : JSON.stringify(v.val)}`
                 }
                 <br />
               </span>

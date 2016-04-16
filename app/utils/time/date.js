@@ -40,16 +40,33 @@ export class GlanceDate {
     } else if (isDefined(month)) {
       return { year };
     }
+    return { year };
   }
 
-  getDefaultDelimiter() {
+  getChildDate({ end } = { end: false }) {
     const { year, month, day, hour } = this.date;
+    const n = end ? GlanceDate.getLength(this, getNextDelimiter(this.getDefaultDelimiter())) : 1;
+    if (isDefined(hour)) {
+      return { year, month, day, hour: n };
+    } else if (isDefined(day)) {
+      return { year, month, day, hour: n };
+    } else if (isDefined(month)) {
+      return { year, month, day: n };
+    } else if (isDefined(year)) {
+      return { year, month: n };
+    }
+  }
+
+  getDefaultDelimiter({ parent } = { parent: false }) {
+    const { year, month, day, hour } = parent ? this.getParentDate(this.date) : this.date;
     if (isDefined(hour)) {
       return 'HOURS';
     } else if (isDefined(day)) {
       return 'DAYS';
     } else if (isDefined(month)) {
       return 'MONTHS';
+    } else if (isDefined(year)) {
+      return 'YEARS';
     }
   }
 
@@ -59,7 +76,7 @@ export class GlanceDate {
 
     // Make an array that has 0's for each hour/day/month we don't have.
     const filled = Array.from({ length: GlanceDate.getLength(this, delimiter) }, (val, i) =>
-      data[i] ? data[i] : 0);
+      data[i + 1] ? data[i + 1] : 0);
 
     // then, Turn this:
     // {
@@ -81,6 +98,15 @@ export class GlanceDate {
 
     return result;
   }
+
+  shed() {
+    return new GlanceDate(this.getParentDate());
+  }
+
+  wrap({ end } = { end: false }) {
+    return new GlanceDate(this.getChildDate({ end }));
+  }
+
 }
 
 // returns the total possible number of hours/days/months/etc
@@ -167,3 +193,34 @@ function fillTime(obj, delimiter, date) {
     obj[i] ? obj[i] : 0);
 }
 
+// TODO: This is terrible...need to have a better way of dealing with this...
+function getNext(str) {
+  switch (str) {
+    case 'HOURS':
+      return 'hour';
+    case 'DAYS':
+      return 'hour';
+    case 'MONTHS':
+      return 'day';
+    case 'YEARS':
+      return 'month';
+    default:
+      return console.error('INVALID STRING FOR getNext');
+  }
+}
+
+// TODO: This is terrible...need to have a better way of dealing with this...
+function getNextDelimiter(str) {
+  switch (str) {
+    case 'HOURS':
+      return 'HOURS';
+    case 'DAYS':
+      return 'HOURS';
+    case 'MONTHS':
+      return 'DAYS';
+    case 'YEARS':
+      return 'MONTHS';
+    default:
+      return console.error('INVALID STRING FOR getNext');
+  }
+}

@@ -24,7 +24,7 @@ const fetchVolumes = (glance, delimiter) => dispatch => {
     delimiter
   ));
 
-  return getMessageVolumes(glance.getParentDate())
+  return getMessageVolumes(glance)
     .then(data => dispatch(
       receiveVolumes(
         glance.transmute(objectifyRethinkReduction(data), delimiter, false),
@@ -35,8 +35,7 @@ const fetchVolumes = (glance, delimiter) => dispatch => {
 };
 
 export const fetchVolumesIfNeeded = (glance) => (dispatch, getState) => {
-  const { volumes } = getState().channelActivity;
-  const delimiter = glance.getDefaultDelimiter();
+  const { volumes, delimiter } = getState().channelActivity;
 
   if (shouldFetchVolumes(volumes, glance.getKey(), delimiter)) {
     return dispatch(fetchVolumes(glance, delimiter));
@@ -56,11 +55,26 @@ export const fetchOrSetCurrentCollection = (datesArray) => (dispatch) => {
   return dispatch(setCurrentCollection(datesArray));
 };
 
-const updateCurrentCollection = dateRange => (dispatch, getState) => {
-  const { delimiter } = getState().channelActivity;
-  const newDatesArray = buildDatesArray(dateRange, delimiter);
+const updateCurrentCollection = () => (dispatch, getState) => {
+  const { delimiter, currentDateRange: { start, end } } = getState().channelActivity;
+  const newDatesArray = buildDatesArray({
+    start: new GlanceDate(start),
+    end: new GlanceDate(end)
+  }, delimiter);
   return dispatch(fetchOrSetCurrentCollection(newDatesArray));
 };
+
+
+// DELIMITER
+export const SET_DELIMITER = 'SET_DELIMITER';
+export const setDelimiter = delimiter =>
+  ({ type: SET_DELIMITER, delimiter });
+
+export const updateDelimiter = delimiter => (dispatch, getState) => {
+  dispatch(setDelimiter(delimiter));
+  dispatch(updateCurrentCollection());
+};
+
 
 // DATE RANGE
 export const SET_DATE_RANGE = 'SET_DATE_RANGE';
@@ -69,21 +83,10 @@ export const setDateRange = (dateRange) =>
 
 // Should we just have the dateRange hold its own delimiter and do the
 // error handling elsewhere?
-export const safeSetDateRange = ({ start, end }) => dispatch => {
+export const resetDateRange = ({ start, end }) => dispatch => {
   if (start.getDefaultDelimiter() === end.getDefaultDelimiter()) {
+    dispatch(setDelimiter(start.getDefaultDelimiter()));
     dispatch(setDateRange({ start: start.date, end: end.date }));
-    dispatch(updateCurrentCollection({ start: start.date, end: end.date }));
+    dispatch(updateCurrentCollection({ start, end }));
   }
-};
-
-// DELIMITER
-export const SET_DELIMITER = 'SET_DELIMITER';
-export const setDelimiter = delimiter =>
-  ({ type: SET_DELIMITER, delimiter });
-
-export const updateDelimiter = delimiter => (dispatch, getState) => {
-  const { currentDateRange } = getState().channelActivity;
-  const newDatesArray = buildDatesArray(currentDateRange, delimiter);
-  dispatch(setDelimiter(delimiter));
-  dispatch(fetchOrSetCurrentCollection(newDatesArray));
 };

@@ -39,6 +39,8 @@ const getDateFormat = delimiter => {
       return 'YYYY-M-D';
     case 'MONTHS':
       return 'YYYY-M';
+    case 'YEARS':
+      return 'YYYY';
     default:
       return console.error('INVALID DELIMITER: ', delimiter);
   }
@@ -49,8 +51,9 @@ export function buildDatesArray({ start, end }, delimiter) {
   let results = [];
   const dateFormat = getDateFormat(delimiter);
 
-  const startDate = moment(getDateAsKey(start), dateFormat);
-  const endDate = moment(getDateAsKey(end), dateFormat);
+  const startDate = moment(start.wrap().getKey(), dateFormat);
+  const endDate = moment(end.wrap({ end: true }).getKey(), dateFormat);
+
   const delimitedDistance = endDate.diff(startDate, delimiter) + 1;
 
   for (let i = 0; i < delimitedDistance; i++) {

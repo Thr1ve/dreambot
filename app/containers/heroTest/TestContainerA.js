@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import EasyTransition from 'react-easy-transition';
 
 import TestDisplayContainer from './TestDisplayContainer';
-import { fetchVolumesIfNeeded, updateDelimiter, safeSetDateRange } from '../../actions';
+import { fetchVolumesIfNeeded, updateDelimiter, resetDateRange } from '../../actions';
 import Dropdown from '../../components/bulma/Dropdown';
 import { GlanceDate } from '../../utils/time';
 
@@ -11,12 +11,12 @@ export const TestContainer = React.createClass({
   componentDidMount() {
     const { dispatch } = this.props;
     // dispatch(fetchVolumesIfNeeded({ year: 2016, month: 3, day: 17 }));
-    dispatch(safeSetDateRange({
+    dispatch(resetDateRange({
       // start: new GlanceDate({ year: 2016, month: 3, day: 17, hour: 1 }),
       // end: new GlanceDate({ year: 2016, month: 3, day: 17, hour: 20 })
 
-      start: new GlanceDate({ year: 2016, month: 3, day: 14 }),
-      end: new GlanceDate({ year: 2016, month: 3, day: 19 })
+      start: new GlanceDate({ year: 2016, month: 3 }),
+      end: new GlanceDate({ year: 2016, month: 4 })
     }));
   },
 
@@ -25,6 +25,7 @@ export const TestContainer = React.createClass({
   },
 
   render() {
+    const { delimiter } = this.props;
     return (
       <EasyTransition
         path={location.pathname}
@@ -37,7 +38,7 @@ export const TestContainer = React.createClass({
           <div className="container">
             <div className="columns">
               <div className="column is-4">
-                <Dropdown label="Delimiter" onChange={this.handleDropDownChange}>
+                <Dropdown value={delimiter} label="Delimiter" onChange={this.handleDropDownChange}>
                   <option value="HOURS"> hour </option>
                   <option value="DAYS"> day </option>
                   <option value="MONTHS"> month </option>
@@ -63,7 +64,9 @@ export const TestContainer = React.createClass({
 });
 
 function mapStateToProps(state) {
-  return state
+  return {
+    delimiter: state.channelActivity.delimiter
+  };
 }
 
 export default connect(mapStateToProps)(TestContainer);

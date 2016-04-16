@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
 
-const Dropdown = ({ children, onChange, label }) => (
+const Dropdown = ({ children, onChange, label, value }) => (
   <span>
     <label className="label"> {label} </label>
     <p className="control">
       <span className="select">
-        <select onChange={onChange}>
+        <select value={value} onChange={onChange}>
           {children}
         </select>
       </span>
@@ -16,6 +16,7 @@ const Dropdown = ({ children, onChange, label }) => (
 Dropdown.propTypes = {
   label: PropTypes.string,
   onChange: PropTypes.func,
+  value: PropTypes.string
 };
 
 export default Dropdown;
