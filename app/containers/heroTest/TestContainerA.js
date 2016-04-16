@@ -3,9 +3,12 @@ import { connect } from 'react-redux';
 import EasyTransition from 'react-easy-transition';
 
 import TestDisplayContainer from './TestDisplayContainer';
-import { fetchVolumesIfNeeded, updateDelimiter, resetDateRange } from '../../actions';
+import TestGraphContainer from './TestGraphContainer';
+import DateRangeForm from './DateRangeForm';
 import Dropdown from '../../components/bulma/Dropdown';
 import { GlanceDate } from '../../utils/time';
+
+import { syncActivityForm, updateDelimiter, resetDateRange, setView } from '../../actions';
 
 export const TestContainer = React.createClass({
   componentDidMount() {
@@ -15,17 +18,34 @@ export const TestContainer = React.createClass({
       // start: new GlanceDate({ year: 2016, month: 3, day: 17, hour: 1 }),
       // end: new GlanceDate({ year: 2016, month: 3, day: 17, hour: 20 })
 
+      // start: new GlanceDate({ year: 2016, month: 3, day: 17 }),
+      // end: new GlanceDate({ year: 2016, month: 3, day: 18 })
+
       start: new GlanceDate({ year: 2016, month: 3 }),
       end: new GlanceDate({ year: 2016, month: 4 })
     }));
+    dispatch(syncActivityForm());
   },
 
-  handleDropDownChange(e) {
+  handleDelimiterChange(e) {
     this.props.dispatch(updateDelimiter(e.target.value));
   },
 
+  handleViewChange(e) {
+    this.props.dispatch(setView(e.target.value));
+  },
+
+  getView(view) {
+    if (view === 'RAW') {
+      return <TestDisplayContainer />;
+    } else if (view === 'GRAPH') {
+      return <TestGraphContainer />;
+    }
+    return <div> No view selected </div>;
+  },
+
   render() {
-    const { delimiter } = this.props;
+    const { delimiter, view } = this.props;
     return (
       <EasyTransition
         path={location.pathname}
@@ -38,24 +58,23 @@ export const TestContainer = React.createClass({
           <div className="container">
             <div className="columns">
               <div className="column is-4">
-                <Dropdown value={delimiter} label="Delimiter" onChange={this.handleDropDownChange}>
-                  <option value="HOURS"> hour </option>
-                  <option value="DAYS"> day </option>
-                  <option value="MONTHS"> month </option>
+                <DateRangeForm />
+                <Dropdown value={delimiter} label="Delimiter" onChange={this.handleDelimiterChange}>
+                  <option value="HOURS"> Hour </option>
+                  <option value="DAYS"> Day </option>
+                  <option value="MONTHS"> Month </option>
+                </Dropdown>
+                <Dropdown value={view} label="View" onChange={this.handleViewChange}>
+                  <option value="RAW"> Raw </option>
+                  <option value="GRAPH"> Graph </option>
                 </Dropdown>
                 { /* <p className="notification is-danger"> First column </p> */ }
               </div>
               <div className="column is-8">
                 { /* <p className="notification is-primary"> Second column </p> */ }
-                <TestDisplayContainer />
+                {this.getView(view)}
               </div>
             </div>
-            <h1 className="title">
-              This is the A page!
-            </h1>
-            <h2 className="subtitle">
-              Isn't it awesome!?
-            </h2>
           </div>
         </div>
       </EasyTransition>
@@ -64,8 +83,10 @@ export const TestContainer = React.createClass({
 });
 
 function mapStateToProps(state) {
+  const { delimiter, view } = state.channelActivity;
   return {
-    delimiter: state.channelActivity.delimiter
+    delimiter,
+    view
   };
 }
 

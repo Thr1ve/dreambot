@@ -30,8 +30,6 @@ const assembleVolumesQuery = (date, delimiter) => {
 };
 
 export function getMessageVolumes(glance) {
-  // const delimiter = glance.getDefaultDelimiter({ parent: true });
-
   return connection().then(conn =>
       assembleVolumesQuery(
         glance.getParentDate(),

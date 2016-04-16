@@ -70,7 +70,7 @@ export const SET_DELIMITER = 'SET_DELIMITER';
 export const setDelimiter = delimiter =>
   ({ type: SET_DELIMITER, delimiter });
 
-export const updateDelimiter = delimiter => (dispatch, getState) => {
+export const updateDelimiter = delimiter => dispatch => {
   dispatch(setDelimiter(delimiter));
   dispatch(updateCurrentCollection());
 };
@@ -90,3 +90,8 @@ export const resetDateRange = ({ start, end }) => dispatch => {
     dispatch(updateCurrentCollection({ start, end }));
   }
 };
+
+// VIEW
+
+export const SET_VIEW = 'SET_VIEW';
+export const setView = view => ({ type: SET_VIEW, view });

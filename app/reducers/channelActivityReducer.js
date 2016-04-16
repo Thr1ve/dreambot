@@ -2,13 +2,17 @@
 
 import {
   REQUEST_VOLUMES, RECEIVE_VOLUMES, SET_DELIMITER,
-  SET_DATE_RANGE, SET_CURRENT_COLLECTION
+  SET_DATE_RANGE, SET_CURRENT_COLLECTION, SET_VIEW
 } from '../actions';
 
 export default function channelActivity(state = {
   delimiter: '',
+  view: 'RAW',
   volumes: volumesReducer(),
-  currentDateRange: {},
+  currentDateRange: {
+    start: {},
+    end: {}
+  },
   currentCollection: []
 }, action = {}) {
   switch (action.type) {
@@ -36,6 +40,11 @@ export default function channelActivity(state = {
       return {
         ...state,
         currentCollection: action.dates
+      };
+    case SET_VIEW:
+      return {
+        ...state,
+        view: action.view
       };
     default:
       return state;

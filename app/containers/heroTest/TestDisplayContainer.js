@@ -30,14 +30,14 @@ const TestDisplayContainer = React.createClass({
 });
 
 function mapStateToProps(state) {
-  const { delimiter, currentCollection, volumes } = state.channelActivity;
+  const { currentCollection, delimiter, volumes } = state.channelActivity;
   return {
-    delimiter: delimiter,
-    currentCollection: currentCollection,
     displayedVolumes: Array.from({ length: currentCollection.length }, (v, i) => {
       const dateKey = currentCollection[i];
       return volumes[delimiter][dateKey];
-    })
+    }),
+    currentCollection,
+    delimiter
   };
 }
 
