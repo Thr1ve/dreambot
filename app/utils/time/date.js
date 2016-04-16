@@ -1,5 +1,7 @@
 /* eslint-disable complexity */
 
+import moment from 'moment';
+
 import {
   isUndefined,
   areUndefined,
@@ -52,37 +54,55 @@ export class GlanceDate {
   }
 
   transmute(data, delimiter, loading) {
-    return transmuteTime(
-      this.getKey({ parent: true }),
-      fillTime(data, delimiter, this.date),
-      loading
-    );
-  }
+    const dateKey = this.getKey({ parent: true });
+    let result = {};
 
+    // Make an array that has 0's for each hour/day/month we don't have.
+    const filled = Array.from({ length: GlanceDate.getLength(this, delimiter) }, (val, i) =>
+      data[i] ? data[i] : 0);
+
+    // then, Turn this:
+    // {
+    //   2016-3-17: [
+    //     [3, 2, 0, 0, ...]
+    //   ]
+    // }
+    // into this:
+    // {
+    //   2016-3-17-1: { loading: false, val: 3 },
+    //   2016-3-17-2: { loading: false, val: 2 },
+    //   2016-3-17-3: { loading: false, val: 0 },
+    //   2016-3-17-4: { loading: false, val: 0 },
+    //   ...
+    // }
+    filled.forEach((val, i) => {
+      result[`${dateKey}-${i + 1}`] = loading ? { loading } : { val, loading };
+    });
+
+    return result;
+  }
 }
 
-GlanceDate.getDateFormat = function (delimiter) {
-  switch (delimiter) {
-    case 'HOURS':
-      return 'YYYY-M-D-H';
-    case 'DAYS':
-      return 'YYYY-M-D';
-    case 'MONTHS':
-      return 'YYYY-M';
-    default:
-      return console.error('INVALID DELIMITER: ', delimiter);
+// returns the total possible number of hours/days/months/etc
+// in said delimiter's parent
+GlanceDate.getLength = function (glance, delimiter) {
+  // the number of days in a month is variable, so
+  // we need to assure we have the month# if our delimiter
+  // is DAYS
+  if (delimiter === 'DAYS' && isUndefined(glance.date.month)) {
+    console.error('The glance must have a month when filling DAYS');
+    return;
+  }
+
+  if (delimiter === 'HOURS') {
+    return 24;
+  } else if (delimiter === 'DAYS') {
+    return moment(glance.getKey()).daysInMonth();
+  } else if (delimiter === 'MONTHS') {
+    return 12;
   }
 };
 
-// let d = new GlanceDate({ year: 2016, month: 3, day: 4, hour: 17 });
-// console.log(d);
-// console.log(d.getKey());
-// console.log(d.getKey({ parent: true }));
-// console.log(d.getParentDate());
-// console.log(d.getDefaultDelimiter());
-
-// let d = new GlanceDate('2016-3-17-5');
-// console.log(d);
 
 // A valid date object will have one of the following:
 //   a. An hour, day, month, and year
@@ -113,7 +133,7 @@ function handleDateKeyStrings(dateObj) {
   return dateObj;
 }
 
-export function getDateFromKey(dateKey) {
+function getDateFromKey(dateKey) {
   const split = dateKey.split('-');
   let newObj = {};
 
@@ -133,7 +153,7 @@ export function getDateFromKey(dateKey) {
   return newObj;
 }
 
-export function fillTime(obj, delimiter, date) {
+function fillTime(obj, delimiter, date) {
   // the number of days in a month is variable, so
   // we need to assure we have the month# if our delimiter
   // is DAYS
@@ -147,35 +167,3 @@ export function fillTime(obj, delimiter, date) {
     obj[i] ? obj[i] : 0);
 }
 
-function getLength(delimiter, date) {
-  if (delimiter === 'HOURS') {
-    return 24;
-  } else if (delimiter === 'DAYS') {
-    return moment(getDateAsKey(date)).daysInMonth();
-  } else if (delimiter === 'MONTHS') {
-    return 12;
-  }
-}
-
-// Turn this:
-// {
-//   2016-3-17: [
-//     [3, 2, 0, 0, ...]
-//   ]
-// }
-// into this:
-// {
-//   2016-3-17-1: { loading: false, val: 3 },
-//   2016-3-17-2: { loading: false, val: 2 },
-//   2016-3-17-3: { loading: false, val: 0 },
-//   2016-3-17-4: { loading: false, val: 0 },
-//   ...
-// }
-export function transmuteTime(dateKey, timeArray, loading) {
-  let result = {};
-  // console.log('DATEKEY: ', dateKey);
-  timeArray.forEach((val, i) => {
-    result[`${dateKey}-${i + 1}`] = loading ? { loading } : { val, loading };
-  });
-  return result;
-}

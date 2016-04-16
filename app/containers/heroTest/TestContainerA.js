@@ -12,8 +12,11 @@ export const TestContainer = React.createClass({
     const { dispatch } = this.props;
     // dispatch(fetchVolumesIfNeeded({ year: 2016, month: 3, day: 17 }));
     dispatch(safeSetDateRange({
-      start: new GlanceDate({ year: 2016, month: 3, day: 17, hour: 1 }),
-      end: new GlanceDate({ year: 2016, month: 3, day: 17, hour: 8 })
+      // start: new GlanceDate({ year: 2016, month: 3, day: 17, hour: 1 }),
+      // end: new GlanceDate({ year: 2016, month: 3, day: 17, hour: 20 })
+
+      start: new GlanceDate({ year: 2016, month: 3, day: 14 }),
+      end: new GlanceDate({ year: 2016, month: 3, day: 19 })
     }));
   },
 
@@ -60,7 +63,7 @@ export const TestContainer = React.createClass({
 });
 
 function mapStateToProps(state) {
-  return state;
+  return state
 }
 
 export default connect(mapStateToProps)(TestContainer);

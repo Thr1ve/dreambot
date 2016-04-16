@@ -2,11 +2,11 @@
 
 import {
   REQUEST_VOLUMES, RECEIVE_VOLUMES, SET_DELIMITER,
-  SET_DATE_RANGE, SET_DATES
+  SET_DATE_RANGE, SET_CURRENT_COLLECTION
 } from '../actions';
 
 export default function channelActivity(state = {
-  delimiter: 'HOURS',
+  delimiter: 'DAYS',
   volumes: volumesReducer(),
   currentDateRange: {},
   currentCollection: []
@@ -32,7 +32,7 @@ export default function channelActivity(state = {
         ...state,
         currentDateRange: action.dateRange
       };
-    case SET_DATES:
+    case SET_CURRENT_COLLECTION:
       return {
         ...state,
         currentCollection: action.dates

@@ -18,18 +18,8 @@ export function getDelimiter({ year, month, day, hour }) {
   }
 }
 
-export function getParentDate({ year, month, day, hour }) {
-  if (isDefined(hour)) {
-    return { year, month, day };
-  } else if (isDefined(day)) {
-    return { year, month };
-  } else if (isDefined(month)) {
-    return { year };
-  }
-}
-
-// TODO: There has GOT to be a more concise way to handle date-keys and delimiters
-export function getDateAsKey({ year, month, day, hour }) {
+// TODO: This is duplicated logic from glance...
+function getDateAsKey({ year, month, day, hour }) {
   if (isDefined(hour)) {
     return `${year}-${month}-${day}-${hour}`;
   } else if (isDefined(day)) {
@@ -41,7 +31,6 @@ export function getDateAsKey({ year, month, day, hour }) {
   }
 }
 
-// TODO: There has GOT to be a more concise way to handle date-keys and delimiters
 const getDateFormat = delimiter => {
   switch (delimiter) {
     case 'HOURS':
@@ -55,6 +44,7 @@ const getDateFormat = delimiter => {
   }
 };
 
+// TODO: This is duplicated logic from glance...
 export function buildDatesArray({ start, end }, delimiter) {
   let results = [];
   const dateFormat = getDateFormat(delimiter);

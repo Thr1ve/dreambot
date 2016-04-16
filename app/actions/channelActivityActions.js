@@ -44,22 +44,22 @@ export const fetchVolumesIfNeeded = (glance) => (dispatch, getState) => {
 };
 
 
-// DATES
-export const SET_DATES = 'SET_DATES';
-export const setDates = dates =>
-  ({ type: SET_DATES, dates });
+// CURRENT COLLECTION
+export const SET_CURRENT_COLLECTION = 'SET_CURRENT_COLLECTION';
+export const setCurrentCollection = dates =>
+  ({ type: SET_CURRENT_COLLECTION, dates });
 
-export const fetchOrSetDates = (datesArray) => (dispatch) => {
+export const fetchOrSetCurrentCollection = (datesArray) => (dispatch) => {
   datesArray.forEach((dateKey) => {
     dispatch(fetchVolumesIfNeeded(new GlanceDate(dateKey)));
   });
-  return dispatch(setDates(datesArray));
+  return dispatch(setCurrentCollection(datesArray));
 };
 
-const updateDates = dateRange => (dispatch, getState) => {
+const updateCurrentCollection = dateRange => (dispatch, getState) => {
   const { delimiter } = getState().channelActivity;
   const newDatesArray = buildDatesArray(dateRange, delimiter);
-  return dispatch(fetchOrSetDates(newDatesArray));
+  return dispatch(fetchOrSetCurrentCollection(newDatesArray));
 };
 
 // DATE RANGE
@@ -72,7 +72,7 @@ export const setDateRange = (dateRange) =>
 export const safeSetDateRange = ({ start, end }) => dispatch => {
   if (start.getDefaultDelimiter() === end.getDefaultDelimiter()) {
     dispatch(setDateRange({ start: start.date, end: end.date }));
-    dispatch(updateDates({ start: start.date, end: end.date }));
+    dispatch(updateCurrentCollection({ start: start.date, end: end.date }));
   }
 };
 
@@ -85,5 +85,5 @@ export const updateDelimiter = delimiter => (dispatch, getState) => {
   const { currentDateRange } = getState().channelActivity;
   const newDatesArray = buildDatesArray(currentDateRange, delimiter);
   dispatch(setDelimiter(delimiter));
-  dispatch(fetchOrSetDates(newDatesArray));
+  dispatch(fetchOrSetCurrentCollection(newDatesArray));
 };
