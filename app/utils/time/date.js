@@ -143,7 +143,6 @@ GlanceDate.getLength = function (glance, delimiter) {
 //   c. A month and year
 //   d. A year
 export function isValidDate({ year, month, day, hour }) {
-  console.log(year, month, day, hour);
   // does it have a year, month, day, and hour?
   if (areDefined(year, month, day, hour)) {
     return true;

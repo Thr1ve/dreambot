@@ -62,7 +62,5 @@ export function buildDatesArray({ start, end }, delimiter) {
     startDate.add(1, delimiter);
   }
 
-  console.log('results: ', results);
-
   return results;
 }

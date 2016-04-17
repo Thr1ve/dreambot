@@ -10,8 +10,8 @@ import { isValidDate, GlanceDate } from '../../utils/time';
 const DateRangeForm = React.createClass({
   propTypes: {
     dispatch: PropTypes.func,
-    start: PropTypes.obj,
-    end: PropTypes.obj,
+    start: PropTypes.object,
+    end: PropTypes.object,
     valid: PropTypes.bool,
     error: PropTypes.string
   },
