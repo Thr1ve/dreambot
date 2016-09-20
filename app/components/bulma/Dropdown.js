@@ -1,8 +1,8 @@
 import React, { PropTypes } from 'react';
 
 const Dropdown = ({ children, onChange, label, value }) => (
-  <span>
-    <label className="label"> {label} </label>
+  <span className="control">
+    <label className="control label"> {label} </label>
     <p className="control">
       <span className="select">
         <select value={value} onChange={onChange}>

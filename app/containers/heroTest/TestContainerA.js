@@ -57,8 +57,15 @@ export const TestContainer = React.createClass({
         <div className="hero-content">
           <div className="container">
             <div className="columns">
-              <div className="column is-4">
+              <div className="column is-8">
                 <DateRangeForm />
+              </div>
+            </div>
+            <div className="colums">
+              <div className="column is-12">
+                {this.getView(view)}
+              </div>
+              <div className="column is-4 control is-horizontal">
                 <Dropdown value={delimiter} label="Delimiter" onChange={this.handleDelimiterChange}>
                   <option value="HOURS"> Hour </option>
                   <option value="DAYS"> Day </option>
@@ -68,11 +75,6 @@ export const TestContainer = React.createClass({
                   <option value="RAW"> Raw </option>
                   <option value="GRAPH"> Graph </option>
                 </Dropdown>
-                { /* <p className="notification is-danger"> First column </p> */ }
-              </div>
-              <div className="column is-8">
-                { /* <p className="notification is-primary"> Second column </p> */ }
-                {this.getView(view)}
               </div>
             </div>
           </div>

@@ -6,7 +6,7 @@ const Input = ({ placeholder, type, onChange, value, name }) => (
       const { name, value } = e.target;
       onChange({ name, value });
     }}
-    className="input is-small"
+    className="input"
     type={type}
     name={name}
     placeholder={placeholder}

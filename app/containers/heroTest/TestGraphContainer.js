@@ -15,7 +15,6 @@ const TestGraphContainer = React.createClass({
     console.log('Hai thur');
   },
 
-  // each data point should have two states: one for when it's loading, the second for when it's done.
   render() {
     const { currentCollection, delimiter, displayedVolumes } = this.props;
     const { length } = currentCollection;
@@ -23,13 +22,24 @@ const TestGraphContainer = React.createClass({
       .from({ length }, (val, i) =>
         ({
           x: (100 / length) * i,
+          // each data point should have two states: one for when it's loading
+          // and a second for when it's done.
           y: !displayedVolumes[i].val ? false : 100 - displayedVolumes[i].val * ranges[delimiter],
         }))
       .filter(({ y }) => y)
-      .map(({ x, y }, i) => `${x}, ${y}`);
+      .map(({ x, y }) => `${x}, ${y}`);
     return (
       <div>
-        <svg viewBox="0 0 100 100" height="400" width="400">
+        <svg
+          viewBox="0 0 100 100"
+          height="350" width="600"
+          style={{
+            background: '#f5f7fa',
+            borderLeft: '2px dotted #222324',
+            borderBottom: '2px dotted #222324',
+            padding: '20px 20px 20px 20px',
+          }}
+        >
           <g strokeWidth="0.4" onClick={this.doAThing}>
             {
               Array.from({ length }, (val, i) =>
@@ -37,6 +47,8 @@ const TestGraphContainer = React.createClass({
                   x1: (100 / length) * i,
                   y1: 100,
                   x2: (100 / length) * i,
+                  // each data point should have two states: one for when it's loading
+                  // and a second for when it's done.
                   y2: !displayedVolumes[i].val ?
                     99.5 :
                     100 - displayedVolumes[i].val * ranges[delimiter],

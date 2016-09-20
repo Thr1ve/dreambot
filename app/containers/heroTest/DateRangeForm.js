@@ -35,7 +35,7 @@ const DateRangeForm = React.createClass({
     const { start, end, valid, error } = this.props;
     return (
       <form onSubmit={this.handleSubmit}>
-        <div>
+        <div className="control">
         { /*
           { !valid && (
             <p className="is-danger"> {error} </p>
@@ -45,13 +45,17 @@ const DateRangeForm = React.createClass({
             <div className="control-label">
               <label className="label">From: </label>
             </div>
-            <DateInputGroup data={start} onChange={this.createChangeFunction('start')} />
+            <div className="control">
+              <DateInputGroup data={start} onChange={this.createChangeFunction('start')} />
+            </div>
           </div>
           <div className="control is-horizontal">
             <div className="control-label">
               <label className="label">To:</label>
             </div>
-            <DateInputGroup data={end} onChange={this.createChangeFunction('end')} />
+            <div className="control">
+              <DateInputGroup data={end} onChange={this.createChangeFunction('end')} />
+            </div>
           </div>
         </div>
         <input type="submit" disabled={!valid} style={{ visibility: 'hidden' }} />

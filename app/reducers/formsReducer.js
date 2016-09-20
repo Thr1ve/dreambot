@@ -2,25 +2,25 @@
 import { UPDATE_ACTIVITY_FORM, SET_ACTIVITY_FORM } from '../actions';
 
 export default function (state = {
-  channelActivity: channelActivityReducer()
+  channelActivity: channelActivityFormReducer()
 }, action = {}) {
   switch (action.type) {
     case UPDATE_ACTIVITY_FORM:
       return {
         ...state,
-        channelActivity: channelActivityReducer(state.channelActivity, action)
+        channelActivity: channelActivityFormReducer(state.channelActivity, action)
       };
     case SET_ACTIVITY_FORM:
       return {
         ...state,
-        channelActivity: channelActivityReducer(state.channelActivity, action)
+        channelActivity: channelActivityFormReducer(state.channelActivity, action)
       };
     default:
       return state;
   }
 }
 
-function channelActivityReducer(state = {
+function channelActivityFormReducer(state = {
   valid: true,
   error: '',
   start: rangeReducer(),
